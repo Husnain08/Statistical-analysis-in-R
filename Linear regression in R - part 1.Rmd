@@ -1,0 +1,144 @@
+
+
+
+
+
+
+
+
+
+```{r Assessing distributions and correlation coefficients}
+
+
+
+plot(copd_dataset$MWT1Best)
+
+copd_dataset$numeric_MWT1 <- as.numeric(copd_dataset$MWT1Best)
+
+
+hist(copd_dataset$numeric_MWT1, main="Histogram of MWT1Best", xlab="MWT1Best", breaks=12) 
+
+
+hist(copd_dataset$FEV1, main="Histogram of FEV1", xlab="FEV1") 
+
+
+#To view descriptive statistics for MWT1Best
+
+list("Summary" = summary(copd_dataset$numeric_MWT1), "Mean" = mean(copd_dataset$numeric_MWT1, na.rm=TRUE), "Standard Deviation" = sd(copd_dataset$numeric_MWT1, na.rm=TRUE), "Range" = range(copd_dataset$numeric_MWT1, na.rm=TRUE), "Inter-Quartile Range" = IQR(copd_dataset$numeric_MWT1, na.rm=TRUE))
+
+
+plot(copd_dataset$FEV1, copd_dataset$MWT1Best, xlab = "FEV1", ylab = "MWT1Best") 
+
+
+# To find the pearson correlation coeffient,
+cor.test(copd_dataset$FEV1, copd_dataset$numeric_MWT1)
+
+# For the spearman correlation
+
+
+cor.test(copd_dataset$FEV1, copd_dataset$numeric_MWT1 , method = 'spearman')
+
+```
+```{r some more plotting}
+
+hist(copd_dataset$AGE, main="Histogram of AGE", xlab="AGE")
+# To print the summary of the variable age
+summary(copd_dataset$AGE)
+
+plot(copd_dataset$AGE)
+
+# To find the association between age and MWT1Best
+plot(copd_dataset$AGE, copd_dataset$numeric_MWT1, xlab ="AGE", ylab ="MWT1Best")
+
+# Now, let's calculate the pearson and spearman correlation coefficient
+# For the pearson correlation
+cor.test(copd_dataset$AGE, copd_dataset$numeric_MWT1)
+
+# For the spearman correlation
+
+
+cor.test(copd_dataset$AGE, copd_dataset$numeric_MWT1 , method = 'spearman')
+
+
+# NOTE
+#The two correlations are slightly different. When the data are normally distributed, you should expect Pearson’s and Spearman’s to be reasonably similar - but there will be greater differences when distributions are skewed or there are outliers.  
+
+
+```
+
+
+
+
+```{r linear regression}
+
+# Predicting EFV1 using MWT1Best
+all(is.na(copd_dataset$MWT1Best))
+all(is.na(copd_dataset$FEV1))
+MWT1Best_FEV1 <- lm(numeric_MWT1 ~ (FEV1), data = copd_dataset, na.action=na.exclude)
+# To see a summary of the fitted linear regression model, print the summary
+
+summary(MWT1Best_FEV1)
+#To view 95% confidence intervals, use the command confint(MWT1Best_FEV1)
+
+confint(MWT1Best_FEV1)
+
+
+#The first is a constant variance plot, which checks for the homogeneity of the variance and the linear relation. If you see no pattern in this graph, then your assumptions are met. 
+
+
+#The second plot is a Q-Q plot, which checks that the residuals follow a normal distribution. The points should fall on a line if the normality assumption is met. 
+
+
+#The third plot allows to detect heterogeneity of the variance. 
+
+
+#The fourth plot allows for the detection of points that have a large impact on the regression coefficients. 
+
+plot(MWT1Best_FEV1)
+```
+
+
+
+```{r linear regression 2}
+
+# Let us predict age by MWT1Best
+
+MWT1Best_AGE <- lm(numeric_MWT1~AGE, data=copd_dataset) 
+
+# print the summary
+summary(MWT1Best_AGE)
+
+
+# Plot the residual graph to validate the assumptions of a linear regression model
+
+plot(MWT1Best_AGE)
+
+# Let's examine the residuals
+
+residual_values <- residuals(MWT1Best_AGE)
+
+
+hist(residual_values)
+```
+
+
+```{r multiple linear regression}
+
+
+MWT1Best_FEV1_AGE <- lm(numeric_MWT1~FEV1+AGE, data = copd_dataset)
+# Plotting the model parameters
+summary(MWT1Best_FEV1_AGE)
+# Plot the residuals
+residual_values <- residuals(MWT1Best_FEV1_AGE)
+
+
+hist(residual_values)
+
+# The histogram of the residual values looks approximately like a normal distribution, so we can safely assume that the conditions of linear regression are intact and the model is valid 
+
+```
+
+      
+      
+      
+    
