@@ -1,0 +1,93 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+
+
+
+
+
+```{r data manipulation}
+# Printing the head of the dataset
+head(X1cancerdata)
+#   The fourth row of the data
+X1cancerdata[4,]
+# the 6th clolumn of the data
+X1cancerdata[,6]
+# To get the dimensions of the data
+dim (X1cancerdata)
+# Extract a column
+gender <- X1cancerdata[,'gender']
+gender
+table(gender)
+bmi <- X1cancerdata[,'bmi']
+summary(bmi)
+```
+
+```{r some_plotting}
+fruit <- X1cancerdata[,'fruit']
+veg <- X1cancerdata[,'veg']
+# Combining the fruit and vegetable column
+fruitveg = X1cancerdata$fruit + X1cancerdata$veg
+# Plotting the fruit and vegetable column
+hist(fruitveg) 
+# Plotting the vegetable column
+hist(X1cancerdata$veg)
+# Plotting the vegetable column
+hist(X1cancerdata$fruit)
+# Plotting the age column
+hist(X1cancerdata$age)
+# Plotting the "smoking" column
+smoke <- X1cancerdata$smoking
+
+table(smoke)
+
+smoke
+```
+
+
+
+
+
+
+```{r ggplot}
+
+require(ggplot2)
+# Plotting the combined fruit and vegetable column
+ggplot() + geom_histogram(data = X1cancerdata, aes(x = fruitveg))
+
+ggplot() + geom_histogram(data = X1cancerdata, aes(x = fruitveg), bins = 10)
+# The borders of the bars will be clearer if made black using col
+ggplot() + geom_histogram(data = X1cancerdata, aes(x = fruitveg), bins = 10, fill = "darkgreen", col = "black")
+
+ggplot() + geom_histogram(data = X1cancerdata, aes(x = bmi), bins = 10, fill = "darkgreen", col = "black")
+
+# creating a new column specifying if a person has healthy bmi
+
+
+X1cancerdata$healthy_BMI <- ifelse(X1cancerdata$bmi > 18.5 & X1cancerdata$bmi < 25, 1, 0)
+table(X1cancerdata$healthy_BMI)
+
+```
+
+```{r hypothesis test}
+
+cancer <- X1cancerdata$cancer
+
+overweight <- ifelse(X1cancerdata$bmi >= 25, 1, 0)
+table(overweight)
+
+# Running a chi-squared test
+chisq.test(x = overweight, y = cancer)
+# This means that 
+#There is no evidence of an association between being overweight and cancer in this data set
+
+ t.test(x = X1cancerdata$cancer , y = X1cancerdata$bmi)
+
+ X1cancerdata$bmi.group
+
+```
+
